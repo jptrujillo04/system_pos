@@ -1,31 +1,36 @@
 package app
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
+	"log"
 	"net/http"
+	"pos_system/cmd/api/app/dependence"
 	"pos_system/internal/config"
 	"pos_system/internal/database"
 )
 
-func New() error {
+func New() {
+	mapRoutes()
+}
+
+func mapRoutes() {
 	dbConfig := config.ReadDBConfig()
 
 	db, err := database.ConnectDB(dbConfig)
 	if err != nil {
-		fmt.Println("Error conectando a la base de datos:", err)
-		return err
+		log.Println("Error conectando a la base de datos:", err)
 	}
 
 	defer db.Close()
+	handlerContainer := dependence.NewWire(db)
+	routes(&handlerContainer)
+}
 
-	router := gin.Default()
+func routes(container *dependence.HandlerContainer) {
+	mux := mux.NewRouter()
 
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "Hello World",
-		})
-	})
+	mux.HandleFunc("/countries", container.HandlerLocation.GetAllContries).Methods("GET")
 
-	return router.Run("localhost:8080")
+	log.Print("Run Server: localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
