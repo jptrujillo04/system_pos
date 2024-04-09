@@ -5,24 +5,10 @@ import (
 	"log"
 	"net/http"
 	"pos_system/cmd/api/app/dependence"
-	"pos_system/internal/config"
-	"pos_system/internal/database"
 )
 
 func New() {
-	mapRoutes()
-}
-
-func mapRoutes() {
-	dbConfig := config.ReadDBConfig()
-
-	db, err := database.ConnectDB(dbConfig)
-	if err != nil {
-		log.Println("Error conectando a la base de datos:", err)
-	}
-
-	defer db.Close()
-	handlerContainer := dependence.NewWire(db)
+	handlerContainer := dependence.NewWire()
 	routes(&handlerContainer)
 }
 

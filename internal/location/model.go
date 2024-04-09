@@ -1,7 +1,7 @@
 package location
 
 type Country struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	ID     int    `gorm:"column:country_id"`
+	Name   string `gorm:"column:country_name"`
+	Status string `gorm:"column:country_state"`
 }

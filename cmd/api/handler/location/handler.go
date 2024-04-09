@@ -1,6 +1,7 @@
 package location
 
 import (
+	"encoding/json"
 	"net/http"
 	"pos_system/internal/location"
 )
@@ -14,7 +15,13 @@ func NewHandler(useCaseLocation location.UseCase) Handler {
 }
 
 func (h Handler) GetAllContries(w http.ResponseWriter, r *http.Request) {
+	countries, err := h.UseCaseLocation.GetAllContries(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Message: Holamundo"))
+
+	json.NewEncoder(w).Encode(countries)
 }

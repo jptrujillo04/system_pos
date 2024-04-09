@@ -1,7 +1,7 @@
 package location
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 )
 
 type RepositoryLocation interface {
@@ -9,15 +9,18 @@ type RepositoryLocation interface {
 }
 
 type Repository struct {
-	DBRepository *sql.DB
+	DBRepository *gorm.DB
 }
 
-func NewRepositoryLocation(db *sql.DB) Repository {
+func NewRepositoryLocation(db *gorm.DB) Repository {
 	return Repository{
 		DBRepository: db,
 	}
 }
 
 func (r Repository) GetAllContries(output interface{}) error {
+	if err := r.DBRepository.Find(output).Error; err != nil {
+		return err
+	}
 	return nil
 }

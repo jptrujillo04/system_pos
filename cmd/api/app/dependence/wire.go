@@ -1,7 +1,6 @@
 package dependence
 
 import (
-	"database/sql"
 	"log"
 	handlerLocation "pos_system/cmd/api/handler/location"
 	"pos_system/internal/location"
@@ -11,8 +10,8 @@ type HandlerContainer struct {
 	HandlerLocation handlerLocation.Handler
 }
 
-func NewWire(db *sql.DB) HandlerContainer {
-	dep, err := NewDependencies(db)
+func NewWire() HandlerContainer {
+	dep, err := NewDependencies()
 	if err != nil {
 		log.Panicf(err.Error())
 		return HandlerContainer{}

@@ -17,5 +17,10 @@ func NewUseCaseLocation(repositoryLocation RepositoryLocation) *UseCaseLocation 
 }
 
 func (u *UseCaseLocation) GetAllContries(ctx context.Context) ([]Country, error) {
-	return []Country{}, nil
+	var countries []Country
+	err := u.RepositoryLocation.GetAllContries(&countries)
+	if err != nil {
+		return nil, err
+	}
+	return countries, nil
 }
