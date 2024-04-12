@@ -1,11 +1,13 @@
 package location
 
 import (
+	"errors"
 	"gorm.io/gorm"
 )
 
 type RepositoryLocation interface {
-	GetAllContries(output interface{}) error
+	GetAllCountries(output interface{}) error
+	SaveCountry(country *Country) error
 }
 
 type Repository struct {
@@ -18,9 +20,26 @@ func NewRepositoryLocation(db *gorm.DB) Repository {
 	}
 }
 
-func (r Repository) GetAllContries(output interface{}) error {
+func (r Repository) GetAllCountries(output interface{}) error {
 	if err := r.DBRepository.Find(output).Error; err != nil {
-		return err
+		return errors.New("error repository find the country")
 	}
 	return nil
+}
+
+func (r Repository) SaveCountry(country *Country) error {
+	tx := r.DBRepository.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if err := r.DBRepository.Create(country).Error; err != nil {
+		errors.New("error repository save the country")
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+	return tx.Commit().Error
 }

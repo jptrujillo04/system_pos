@@ -3,7 +3,8 @@ package location
 import "context"
 
 type UseCase interface {
-	GetAllContries(ctx context.Context) ([]Country, error)
+	GetAllCountries(ctx context.Context) ([]Country, error)
+	SaveCountry(ctx context.Context, country CountryRequest) error
 }
 
 type UseCaseLocation struct {
@@ -16,11 +17,16 @@ func NewUseCaseLocation(repositoryLocation RepositoryLocation) *UseCaseLocation 
 	}
 }
 
-func (u *UseCaseLocation) GetAllContries(ctx context.Context) ([]Country, error) {
+func (u *UseCaseLocation) GetAllCountries(ctx context.Context) ([]Country, error) {
 	var countries []Country
-	err := u.RepositoryLocation.GetAllContries(&countries)
+	err := u.RepositoryLocation.GetAllCountries(&countries)
 	if err != nil {
 		return nil, err
 	}
 	return countries, nil
+}
+
+func (u *UseCaseLocation) SaveCountry(ctx context.Context, countryReq CountryRequest) error {
+	country := MapCountryRequestToModelCountry(countryReq)
+	return u.RepositoryLocation.SaveCountry(&country)
 }

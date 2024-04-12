@@ -15,7 +15,8 @@ func New() {
 func routes(container *dependence.HandlerContainer) {
 	mux := mux.NewRouter()
 
-	mux.HandleFunc("/countries", container.HandlerLocation.GetAllContries).Methods("GET")
+	mux.HandleFunc("/locations/countries", container.HandlerLocation.GetAllCountries).Methods("GET")
+	mux.HandleFunc("/locations/save", container.HandlerLocation.SaveCountries).Methods("POST")
 
 	log.Print("Run Server: localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
