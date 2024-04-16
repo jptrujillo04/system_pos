@@ -16,6 +16,7 @@ func MapRequestToCountryRequest(r *http.Request, output interface{}) error {
 
 func MapCountryRequestToModelCountry(request CountryRequest) Country {
 	return Country{
+		ID:     request.ID,
 		Name:   request.Name,
 		Status: request.Status,
 	}

@@ -7,6 +7,11 @@ type Country struct {
 }
 
 type CountryRequest struct {
-	Name   string `json:"country_name"`
-	Status string `json:"country_state"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Status string `json:"state"`
+}
+
+type UpdateCountryRequest struct {
+	ID int `json:"country_id"`
 }

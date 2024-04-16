@@ -2,6 +2,7 @@ package location
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"pos_system/internal/location"
 )
@@ -33,7 +34,25 @@ func (h Handler) SaveCountries(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Print("Create Countries Request: ", countryReq)
 	err = h.UseCaseLocation.SaveCountry(r.Context(), countryReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (h Handler) UpdateCountries(w http.ResponseWriter, r *http.Request) {
+	var countryReq location.CountryRequest
+	err := location.MapRequestToCountryRequest(r, &countryReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.Print("Update Countries Request: ", countryReq)
+	err = h.UseCaseLocation.UpdateCountry(r.Context(), countryReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -1,10 +1,14 @@
 package location
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 type UseCase interface {
 	GetAllCountries(ctx context.Context) ([]Country, error)
 	SaveCountry(ctx context.Context, country CountryRequest) error
+	UpdateCountry(ctx context.Context, countryReq CountryRequest) error
 }
 
 type UseCaseLocation struct {
@@ -27,6 +31,17 @@ func (u *UseCaseLocation) GetAllCountries(ctx context.Context) ([]Country, error
 }
 
 func (u *UseCaseLocation) SaveCountry(ctx context.Context, countryReq CountryRequest) error {
+	if countryReq.ID != 0 {
+		return errors.New("do not send an ID when creating a country")
+	}
 	country := MapCountryRequestToModelCountry(countryReq)
 	return u.RepositoryLocation.SaveCountry(&country)
+}
+
+func (u *UseCaseLocation) UpdateCountry(ctx context.Context, countryReq CountryRequest) error {
+	if countryReq.ID == 0 {
+		return errors.New("invalid country id")
+	}
+	country := MapCountryRequestToModelCountry(countryReq)
+	return u.RepositoryLocation.UpdateCountry(&country)
 }
